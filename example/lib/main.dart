@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "初始化状态：",
+                  "Subscription status：",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Expanded(
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "连接状态：",
+                  "Connection Status：",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Expanded(
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "订阅状态：",
+                  "Subscription status：",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Expanded(
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "新消息：",
+                  "New message：",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Expanded(
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "发送的消息：",
+                  "Sent message：",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Expanded(
@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               highlightColor: Colors.blueAccent,
               splashColor: Colors.blue,
               color: Colors.blue,
-              child: Text("初始化并打开连接"),
+              child: Text("Initialize and open the connection"),
             ),
             RaisedButton(
               onPressed: () {
@@ -147,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
               highlightColor: Colors.blueAccent,
               splashColor: Colors.blue,
               color: Colors.blue,
-              child: Text("发送消息"),
+              child: Text("Send a message"),
             ),
             RaisedButton(
               onPressed: () {
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
               highlightColor: Colors.blueAccent,
               splashColor: Colors.blue,
               color: Colors.blue,
-              child: Text("断开并销毁资源"),
+              child: Text("Disconnect and destroy resources"),
             ),
           ],
         ),
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   ///
-  ///初始化并连接stomp
+  ///Initialize and connect to stomp
   ///
   Future _initStomp() async {
     if (stomp == null) {
@@ -203,59 +203,59 @@ class _MyHomePageState extends State<MyHomePage> {
     bool b =
         await stomp.init(url: url, sendUrl: "/microGroupMessage/sendMessage");
 
-    _initStateChanged(b ? "初始化成功" : "初始化失败");
+    _initStateChanged(b ? "Initialization successful" : "initialization failed");
 
     if (b) {
       ///打开连接
       await stomp.connection((open) async {
-        print("连接打开了...$open");
-        _connectionStateChanged("Stomp连接打开了...");
+        print("The connection is open...$open");
+        _connectionStateChanged("Stomp connection is open...");
 
-        ///订阅点对点通道
+        ///Subscribe to the peer-to-peer channel
         final String p2p = "/microGroupMessage/" + userId;
         bool b = await stomp.subscribP2P([p2p]);
         if (b) {
           setState(() {
-            _subscriberState = "通道订阅完成：" + p2p;
+            _subscriberState = "Channel subscription completed：" + p2p;
           });
         }
       }, onError: (error) {
-        print("连接打开错误了...$error");
-        _connectionStateChanged("Stomp连接出错了：$error");
+        print("Connection open error...$error");
+        _connectionStateChanged("Stomp connection is wrong：$error");
       }, onClosed: (closed) {
-        print("连接打开错误了...$closed");
-        _connectionStateChanged("Stomp连接关闭了...");
+        print("Connection open error...$closed");
+        _connectionStateChanged("Stomp connection is closed...");
       });
     }
 
-    ///添加消息回调
+    ///Add message callback
     await stomp.onMessageCallback((message) {
-      print("收到p2p新消息：" + message.toString());
-      _messageStateChanged("收到p2p新消息：" + message.toString());
+      print("Received p2p new message：" + message.toString());
+      _messageStateChanged("Received p2p new message：" + message.toString());
     }, onBroadCast: (cast) {
-      print("收到新广播消息：" + cast.toString());
-      _messageStateChanged("收到广播新消息：" + cast.toString());
+      print("Received a new broadcast message：" + cast.toString());
+      _messageStateChanged("Received a broadcast new message：" + cast.toString());
     });
 
-    ///添加发送回调
+    ///Add send callback
     await stomp.onSendCallback((status, sendMsg) {
-      print("消息发送完毕：$status :msg=" + sendMsg.toString());
-      _sendStateChanged("发送了一条消息：$status :msg=" + sendMsg.toString());
+      print("Message sent：$status :msg=" + sendMsg.toString());
+      _sendStateChanged("Sent a message：$status :msg=" + sendMsg.toString());
     });
   }
 
   ///
-  /// 发送消息
+  /// Send a message
   ///
   Future<String> _sendMsg() async {
     Map<String, dynamic> msg = {
-      "content": "flutter发送的消息",
+      "content": "Message sent by flutter",
       "createId": "1143077861691756546",
       "createName": "陈晨",
       "createTime": "2019-06-24 17:03:51",
       "id": "1046324312976343042",
       "microGroupId": "1143049991384731649",
-      "microGroupName": "flutter讨论群",
+      "microGroupName": "Flutter discussion group",
       "type": 0
     };
 
@@ -267,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   ///
-  /// 断开连接，销毁资源
+  /// Disconnect and destroy resources
   ///
   Future<bool> _destroyStomp() async {
     if (stomp == null) {
