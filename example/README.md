@@ -1,16 +1,16 @@
 # jstomp_example
 
-  目前只支持Android，下面看一下具体使用的步骤
-  1、初始化
-  2、打开连接
-  3、订阅通道
-  4、添加监听
-  5、发送消息
+  Currently only supports Android, let's take a look at the specific steps.
+   1. initialization
+   2. open the connection
+   3. subscription channel
+   4. add a monitor
+   5. send a message
 
 ## Example
 
 ```
-      ///初始化并连接stomp
+      ///Initialize and connect to stomp
       Future _initStomp() async {
         if (stomp == null) {
           stomp = JStomp.instance;
@@ -19,51 +19,51 @@
         String url = "ws://192.168.1.223:9990/message/websocket?personId=" + userId;
         bool b = await stomp.init(url: url, sendUrl: "/groupMessage/sendMessage");
 
-        _initStateChanged(b ? "初始化成功" : "初始化失败");
+        _initStateChanged(b ? "Initialization successful" : "initialization failed");
 
         if (b) {
-          ///打开连接
+          ///Open connection
           await stomp.connection((open) {
-            print("连接打开了...$open");
-            _connectionStateChanged("Stomp连接打开了...");
+            print("The connection is open...$open");
+            _connectionStateChanged("Stomp连接打Stomp connection is open开了...");
           }, onError: (error) {
-            print("连接打开错误了...$error");
-            _connectionStateChanged("Stomp连接出错了：$error");
+            print("Connection open error...$error");
+            _connectionStateChanged("Stomp connection is wrong：$error");
           }, onClosed: (closed) {
-            print("连接打开错误了...$closed");
-            _connectionStateChanged("Stomp连接关闭了...");
+            print("Connection open error...$closed");
+            _connectionStateChanged("Stomp connection is closed...");
           });
         }
 
-        ///订阅点对点通道
+        ///Subscribe to the peer-to-peer channel
         final String p2p = "/groupMessage/channel/" + userId;
         await stomp.subscribP2P([p2p]);
 
-        ///订阅广播通道
+        ///Subscribe to the broadcast channel
         await stomp.subscribBroadcast(["groupBroadcast/message"]);
 
         setState(() {
-          _subscriberState = "通道订阅完成：" + p2p;
+          _subscriberState = "Channel subscription completed：" + p2p;
         });
 
-        ///添加消息回调
+        ///Add message callback
         await stomp.onMessageCallback((message) {
-          print("收到p2p新消息：" + message.toString());
-          _messageStateChanged("收到p2p新消息：" + message.toString());
+          print("Received p2p new message：" + message.toString());
+          _messageStateChanged("Received p2p new message：" + message.toString());
         }, onBroadCast: (cast) {
-          print("收到新广播消息：" + cast.toString());
-          _messageStateChanged("收到广播新消息：" + cast.toString());
+          print("Received a new broadcast message：" + cast.toString());
+          _messageStateChanged("Received a broadcast new message：" + cast.toString());
         });
 
-        ///添加发送回调
+        ///Add send callback
         await stomp.onSendCallback((status, sendMsg) {
-          print("消息发送完毕：$status :msg=" + sendMsg.toString());
-          _sendStateChanged("发送了一条消息：$status :msg=" + sendMsg.toString());
+          print("Message sent：$status :msg=" + sendMsg.toString());
+          _sendStateChanged("Sent a message：$status :msg=" + sendMsg.toString());
         });
       }
 
       ///
-      /// 发送消息
+      /// Send a message
       ///
       Future<String> _sendMsg() async {
         Map<String, dynamic> msg = {
@@ -84,7 +84,7 @@
         return await stomp.sendMessage(json.encode(msg), header: head);
       }
 
-      /// 断开连接，销毁资源
+      /// Disconnect and destroy resources
       Future<bool> _destroyStomp() async {
         if (stomp == null) {
           return true;
@@ -96,7 +96,7 @@
 
 ```
 
-以上就是整个Stomp库使用的基本步骤。
+The above is the basic steps used by the entire Stomp library.
 
 
 
