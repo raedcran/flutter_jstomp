@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-///定义消息回调函数,并制定参数类型
+///Define message callback functions and formulate parameter types
 typedef OnMessageCallback = Function(dynamic jsonMsg);
 
-///定义消息发送回调函数
+///Define a message dispatch callback function
 typedef OnSendMessageCallback = Function(SendStatus status, dynamic jsonMsg);
 
 class JStomp {
@@ -17,21 +17,21 @@ class JStomp {
 
   static JStomp get instance => _getInstance();
 
-  ///channel实例
+  ///Channel instance
   MethodChannel _channel;
 
-  ///接受消息stream
+  ///Accept message stream
   StreamController<_OnMessageData> _messageController;
 
-  ///连接回到stream
+  ///Connect back to stream
   StreamController<_OnConnectionData> _connectionController;
 
-  ///发送消息数据stream
+  ///Send message data stream
   // ignore: close_sinks
   StreamController<_OnSendMessageData> _sendController;
 
   JStomp._init() {
-    ///初始化
+    ///initialization
     _channel = const MethodChannel('jstomp');
     _connectionController = new StreamController.broadcast();
     _messageController = new StreamController.broadcast();
@@ -39,7 +39,7 @@ class JStomp {
   }
 
   ///
-  /// 返回实例对象
+  /// Return instance object
   ///
   static JStomp _getInstance() {
     if (_instance == null) {
@@ -49,10 +49,10 @@ class JStomp {
   }
 
   ///
-  /// stomp初始化
+  /// Stomp initialization
   ///
   Future<bool> init({@required String url, @required String sendUrl}) async {
-    ///添加native方法调用处理方法
+    ///Add native method call processing method
     _channel.setMethodCallHandler(_nativeHandle);
 
     Map<String, String> params = {
@@ -64,17 +64,17 @@ class JStomp {
   }
 
   ///
-  /// 打开stomp连接
+  /// Open stomp connection
   ///
   Future<bool> connection(ValueChanged onOpen,
       {ValueChanged onError, ValueChanged onClosed}) async {
-    ///先注册连接状态监听器
+    ///Register the connection status listener first
     _onConnectionCallback(onOpen, onError, onClosed);
     return await _channel.invokeMethod(_NativeMethod.CONNECTION);
   }
 
   ///
-  /// stomp连接监听器
+  /// Stomp connection listener
   ///
   void _onConnectionCallback(
       ValueChanged onOpen, ValueChanged onError, ValueChanged onClosed) {
@@ -100,9 +100,9 @@ class JStomp {
   }
 
   ///
-  /// 销毁
-  /// 断开stomp连接，并且销毁一切资源，包括client，监听器，Rxjava Observer等
-  /// 停止service
+  /// Destroy
+  /// Disconnect stomp and destroy all resources, including client, listener, Rxjava Observer, etc.
+  /// Stop the service
   ///
   Future<bool> destroy() async {
     bool b = await _channel.invokeMethod(_NativeMethod.DESTROY);
@@ -111,8 +111,8 @@ class JStomp {
   }
 
   ///
-  /// 订阅p2p通道
-  /// [urls] 要订阅的点对点通道地址，可以是多个
+  /// Subscribe to the p2p channel
+  /// [urls] The point-to-point channel address to be subscribed to, can be multiple
   ///
   Future<bool> subscribP2P(List<String> urls) async {
     assert(urls != null);
@@ -121,8 +121,8 @@ class JStomp {
   }
 
   ///
-  /// 订阅广播通道
-  /// [urls] 要订阅的广播通道地址，可以是多个
+  /// Subscribe to the broadcast channel
+  /// [urls] The broadcast channel address to be subscribed to, can be multiple
   ///
   Future<bool> subscribBroadcast(List<String> urls) async {
     assert(urls != null);
@@ -132,20 +132,20 @@ class JStomp {
   }
 
   ///
-  /// 接受消息监听
-  /// [onMessage] 点对点消息回到函数
-  /// [onBroadCast] 广播消息回调函数
+  /// Accept message listener
+  /// [onMessage] Point-to-point message back to function
+  /// [onBroadCast] broadcast message callback function
   ///
   Future<bool> onMessageCallback(OnMessageCallback onMessage,
       {OnMessageCallback onBroadCast}) async {
-    ///监听消息流
+    ///Listening for message flow
     _messageController.stream.listen((message) {
-      ///根据具体的消息类型回调flutter
+      ///Callback flutter based on the specific message type
       switch (message.type) {
-        case _MessageType.P2P: //点对点消息
+        case _MessageType.P2P: //Peer-to-peer message
           onMessage(message.message);
           break;
-        case _MessageType.BROADCAST: //广播消息
+        case _MessageType.BROADCAST: //Broadcast message
           if (onBroadCast != null) {
             onBroadCast(message.message);
           }
@@ -155,17 +155,17 @@ class JStomp {
       }
     });
 
-    ///调用native方法注册消息callback
+    ///Call the native method to register the message callback
     return _channel.invokeMethod(_NativeMethod.MESSAGE_CALLBACK);
   }
 
   ///
-  /// 发送消息
-  /// [message] 消息体，一般为json
-  /// [header] stomp消息头,默认可不传
+  /// Send a message
+  /// [message] message body, usually json
+  /// [header] stomp message header, the default can not pass
   ///
   Future<String> sendMessage(String message, {Map<String, dynamic> header}) {
-    ///將stomp头的value 转换为String类型，
+    ///Convert the value of the stomp header to a String type.
     Map<String, String> headMap = new Map();
     if (header != null) {
       headMap = header.map((String key, value) {
@@ -177,8 +177,8 @@ class JStomp {
   }
 
   ///
-  /// 发送消息监听
-  /// [callback] 发送消息回调函数，参数为消息体
+  /// Send a message listener
+  /// [callback] Send a message callback function with the parameter body
   ///
   Future<bool> onSendCallback(OnSendMessageCallback callback) async {
     _sendController.stream.listen((message) {
@@ -192,7 +192,7 @@ class JStomp {
   }
 
   ///
-  /// native调用flutter的方法处理
+  /// native call flutter method processing
   ///
   Future<dynamic> _nativeHandle(MethodCall call) async {
     String method = call.method;
@@ -200,38 +200,38 @@ class JStomp {
     switch (method) {
       case _NativeMethod.ON_SEND:
 
-        ///发送消息回调
+        ///Send message callback
         Map<String, dynamic> params = Map.from(call.arguments);
         _sendController
             .add(_OnSendMessageData(params["status"], params["msg"]));
         break;
       case _NativeMethod.ON_MESSAGE:
 
-        ///收到新消息
+        ///Receive new news
         _messageController
             .add(new _OnMessageData(_MessageType.P2P, call.arguments));
         break;
       case _NativeMethod.ON_BROAD_CAST:
 
-        ///接到到新广播消息回调
+        ///Received a new broadcast message callback
         _messageController
             .add(new _OnMessageData(_MessageType.BROADCAST, call.arguments));
         break;
       case _NativeMethod.ON_CONNECTION_OPENED:
 
-        ///连接打开回调
+        ///Connection open callback
         _connectionController
             .add(_OnConnectionData(_Connection.OPEN, call.arguments));
         break;
       case _NativeMethod.ON_CONNECTION_ERROR:
 
-        ///连接错误回调
+        ///Connection error callback
         _connectionController
             .add(_OnConnectionData(_Connection.ERROR, call.arguments));
         break;
       case _NativeMethod.ON_CONNECTION_CLOSED:
 
-        ///连接断开回调
+        ///Connection disconnect callback
         _connectionController
             .add(_OnConnectionData(_Connection.CLOSED, call.arguments));
         break;
@@ -240,7 +240,7 @@ class JStomp {
   }
 
   ///
-  ///关闭streamcontroller 对象
+  ///Turn off the streamcontroller object
   ///
   Future _closedStreamControllers() async {
     if (_connectionController != null) {
@@ -259,27 +259,27 @@ class JStomp {
 }
 
 ///
-/// 连接方式
+/// Connection method
 ///
 enum Schema { WS, HTTP }
 
 ///
-/// 连接回调方法
+/// Connection callback method
 ///
 enum _Connection { OPEN, ERROR, CLOSED }
 
 ///
-/// 接受的消息类型
+/// Accepted message type
 ///
 enum _MessageType { P2P, BROADCAST }
 
 ///
-/// 消息发送给状态，成功1 失败0
+/// Message sent to status, success 1 failed 0
 ///
 enum SendStatus { FAIL, SUCCESS }
 
 ///
-/// 连接回调数据
+/// Connection callback data
 ///
 class _OnConnectionData {
   _Connection call;
@@ -289,7 +289,7 @@ class _OnConnectionData {
 }
 
 ///
-/// 消息回调数据
+/// Message callback data
 ///
 class _OnMessageData {
   _MessageType type;
@@ -299,7 +299,7 @@ class _OnMessageData {
 }
 
 ///
-/// 发送消息回调数据
+/// Send message callback data
 ///
 class _OnSendMessageData {
   int status;
@@ -309,10 +309,10 @@ class _OnSendMessageData {
 }
 
 ///
-/// 定义调用的方法,包括原生和flutter
+/// Define the methods to call, including native and flutter
 ///
 class _NativeMethod {
-  ///flutter调用native
+  ///Flutter calls native
   static const String INIT = "init";
   static const String CONNECTION = "connection";
   static const String SUBSCRIBER_P2P = "subscriberP2P";
@@ -322,7 +322,7 @@ class _NativeMethod {
   static const String DESTROY = "destroy";
   static const String SEND_MESSAGE = "sendMessage";
 
-  ///native 反调flutter
+  ///Native reverse flutter
   static const String ON_CONNECTION_OPENED = "onConnectionOpen";
   static const String ON_CONNECTION_ERROR = "onConnectionError";
   static const String ON_CONNECTION_CLOSED = "onConnectionClosed";
