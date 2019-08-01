@@ -35,7 +35,7 @@ Previously, there was a websocket encapsulated in the Stomp protocol. The termin
         
 ## Second, how to use
     
-#### 1、introduced in the pubspec.yaml file of the flutter project
+#### 1. Introduced in the pubspec.yaml file of the flutter project
 
 ```
 dependencies:
@@ -44,7 +44,7 @@ dependencies:
 import 'package:jstomp/jstomp.dart';
 
 ```
-#### 2、initialize stomp
+#### 2. Initialize stomp
 
 ```
     JStomp stomp = JStomp.instance;
@@ -60,7 +60,7 @@ import 'package:jstomp/jstomp.dart';
 
 ```
 
-#### 3、open the connection
+#### 3. Open the connection
 
 ```
  if (b) {
@@ -84,7 +84,7 @@ import 'package:jstomp/jstomp.dart';
     The parameter closed: is a callback function with a bool type, which means that the connection is closed and the return value is false;
 ```
              
-#### 4、subscribe to the message channel, support peer-to-peer and broadcast, support simultaneous subscription to multiple channels
+#### 4. Subscribe to the message channel, support peer-to-peer and broadcast, support simultaneous subscription to multiple channels
 
 ```
             //Point-to-point channel address, I subscribe to the channel with the specified userid here.
@@ -98,7 +98,7 @@ import 'package:jstomp/jstomp.dart';
 
 ```
 
-#### 5、set the message listener, callback when a new message arrives, you can set peer-to-peer and broadcast callback at the same time; the message returned by the callback is a string in json format,
+#### 5. Set the message listener, callback when a new message arrives, you can set peer-to-peer and broadcast callback at the same time; the message returned by the callback is a string in json format,
            The json string can be parsed according to your needs.
 
 ```
@@ -116,7 +116,7 @@ import 'package:jstomp/jstomp.dart';
            The parameter message: is a json string representing the content of the message received this time.
 ```
 
-#### 6、set the send message callback listener, when sending a stomp message, regardless of whether the message is sent successfully or failed, this callback will be the content of this message
+#### 6. Set the send message callback listener, when sending a stomp message, regardless of whether the message is sent successfully or failed, this callback will be the content of this message
            The callback comes back, in addition to the send status.
 
 ```
@@ -131,7 +131,7 @@ import 'package:jstomp/jstomp.dart';
 
 ```
 
-#### 7、send a message
+#### 7. Send a message
 
 ```
             //Use map to construct a data to be sent. The following data is the message data format on my project. The message field is customized according to your needs.
@@ -164,7 +164,7 @@ import 'package:jstomp/jstomp.dart';
            await stomp.sendMessage(json.encode(msg), header: head);
 ```
 
-#### 8、disconnect and destroy resources
+#### 8. Disconnect and destroy resources
 
 ```
      await stomp.destroy();
