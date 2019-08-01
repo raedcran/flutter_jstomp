@@ -7,26 +7,26 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * @company 上海道枢信息科技-->
+ * @company Shanghai Daoqiao Information Technology-->
  * @anthor created by jingzhanwu
  * @date 2018/1/23
  * @change
  * @describe describe
- * Stomp配置信息
+ * Stomp configuration information
  **/
 @SuppressLint("NewApi")
 public class StompConfig {
-    /*操作成功*/
+    /*Successful operation*/
     public static final int STOMP_SEND_SUCCESS = 1;
-    /*操作失败*/
+    /*operation failed*/
     public static final int STOMP_SEND_FAIL = 0;
-    /*初始化端点url*/
+    /*Initialize the endpoint url*/
     private String url;
-    /*发送消息url*/
+    /*Send message url*/
     private String sendUrl;
-    /*订阅广播的地址*/
+    /*Subscribe to the broadcast address*/
     private Set<String> topicBroadCast = new ArraySet<>();
-    /*订阅点对点的地址*/
+    /*Subscribe to a peer-to-peer address*/
     private Set<String> topic = new ArraySet<>();
 
 
@@ -37,7 +37,7 @@ public class StompConfig {
 
 
     /**
-     * p2p订阅地址，多个
+     * P2p subscription address, multiple
      *
      * @param topicUrl
      * @return
@@ -49,7 +49,7 @@ public class StompConfig {
     }
 
     /**
-     * 广播订阅地址 多个
+     * Broadcast subscription address multiple
      *
      * @param broadcastUrl
      * @return
@@ -60,7 +60,7 @@ public class StompConfig {
     }
 
     /**
-     * 返回发送url
+     * Return send url
      *
      * @return
      */
@@ -69,7 +69,7 @@ public class StompConfig {
     }
 
     /**
-     * 返回点对点 订阅的地址
+     * Return to peer-to-peer subscription address
      *
      * @return
      */
@@ -78,7 +78,7 @@ public class StompConfig {
     }
 
     /**
-     * 返回广播订阅的地址
+     * Return the address of the broadcast subscription
      *
      * @return
      */
@@ -88,7 +88,7 @@ public class StompConfig {
 
 
     /**
-     * 返回最终初始化用的url
+     * Returns the url for final initialization
      *
      * @return
      */
