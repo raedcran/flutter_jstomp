@@ -42,17 +42,17 @@ public class StompProvider {
     private StompClient mStompClient;
     private static StompProvider instance;
     private Context mContext;
-    /*统一的消息监听接口*/
+    /*Unified message listening interface*/
 
     private OnMessageListener messageListener;
-    /*全局发送监听*/
+    /*Global send listener*/
     private OnMessageSendListener globalSendStatusListener;
-    /*连接监听*/
+    /*Connection monitoring*/
     private OnStompConnectionListener connectionListener;
 
-    /*stomp连接信息配置类*/
+    /*Stomp connection information configuration class*/
     private StompConfig mConfig;
-    /*标记服务是否已经启动*/
+    /*Whether the markup service has started*/
     public boolean stopService = false;
 
     public StompClient getStompClient() {
@@ -62,18 +62,18 @@ public class StompProvider {
     private CompositeDisposable compositeDisposable;
 
     /**
-     * stomp 的连接 关闭监听接口
+     * Stomp connection close listening interface
      */
     public interface OnStompConnectionListener {
-        void onConnectionOpened();//链接打开
+        void onConnectionOpened();//Link open
 
-        void onConnectionError(String error);//链接错误
+        void onConnectionError(String error);//Link error
 
-        void onConnectionClosed();//链接关闭
+        void onConnectionClosed();//Link closed
     }
 
     /**
-     * 总的消息监听接口
+     * Total message listening interface
      */
     public interface OnMessageListener {
         void onBroadcastMessage(String stompMsg, String topicUrl);
@@ -82,7 +82,7 @@ public class StompProvider {
     }
 
     /**
-     * stomp发送接口
+     * Stomp send interface
      */
     public interface OnMessageSendListener {
         void onSendMessage(int status, String userMsg, String tipsMsg);
@@ -104,7 +104,7 @@ public class StompProvider {
     }
 
     /**
-     * 重置、断开订阅者
+     * Reset and disconnect subscribers
      */
     private void resetSubscriptions() {
         if (compositeDisposable != null) {
@@ -114,7 +114,7 @@ public class StompProvider {
     }
 
     /**
-     * 获取当前配置
+     * Get current configuration
      *
      * @return
      */
@@ -123,9 +123,9 @@ public class StompProvider {
     }
 
     /**
-     * 初始化操作,
+     * Initialization operation,
      *
-     * @param config 自定义配置信息
+     * @param config Custom configuration information
      */
     public boolean init(Context context, StompConfig config) {
         try {
@@ -134,7 +134,7 @@ public class StompProvider {
             this.mConfig = config;
             String url = config.connectionUrl();
             mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url);
-            Log.d(TAG, "Stomp 初始化--url:" + url);
+            Log.d(TAG, "Stomp initialization--url:" + url);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +143,7 @@ public class StompProvider {
     }
 
     /**
-     * 启动stomp 消息服务
+     * Start the stomp message service
      */
     @TargetApi(Build.VERSION_CODES.O)
     public StompProvider openConnection(OnStompConnectionListener listener) {
@@ -152,8 +152,8 @@ public class StompProvider {
         }
         try {
             connectionListener = listener;
-            //如果StompService 已经启动了并且service没有销毁则不用重新启动服务，
-            //只需要重新注册Stomp监听即可
+            // If the StompService has been started and the service is not destroyed, then do not restart the service.
+            //just need to re-register Stomp listener
             if (!stopService && StompService.GET() != null) {
                 StompService.GET().registerStompConnectionListener();
                 return this;
@@ -161,7 +161,7 @@ public class StompProvider {
 
             Intent intent = new Intent(mContext, StompService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                //android8.0以上通过startForegroundService启动service
+                // android8.0 or above start service through startForegroundService
                 mContext.startForegroundService(intent);
             } else {
                 mContext.startService(intent);
@@ -174,7 +174,7 @@ public class StompProvider {
     }
 
     /**
-     * 重新连接stomp
+     * Reconnect stomp
      *
      * @return
      */
@@ -182,18 +182,18 @@ public class StompProvider {
         if (mContext == null || mConfig == null) {
             return;
         }
-        //先断开连接
+        //Disconnect first
         // disconnect();
-        //重新初始化
+        //Reset
         boolean b = init(mContext, mConfig);
         if (b) {
-            Log.i(TAG, "正在进行stomp重连");
+            Log.i(TAG, "Stomp reconnection is in progress");
             openConnection(connectionListener);
         }
     }
 
     /**
-     * 订阅p2p,没有指定url时从配置信息中获取
+     * Subscribe to p2p, get it from the configuration information when no url is specified
      *
      * @return
      */
@@ -206,19 +206,19 @@ public class StompProvider {
     }
 
     /**
-     * 订阅p2p
+     * Subscribe to p2p
      *
      * @param topicUrl
      * @return
      */
     public StompProvider subscriber(String... topicUrl) {
         if (null == topicUrl || topicUrl.length == 0) {
-            Log.i(TAG, "p2p订阅地址为空--");
+            Log.i(TAG, "P2p subscription address is empty --");
             return this;
         }
         mConfig.topicUrl(topicUrl);
         for (String url : topicUrl) {
-            Log.i(TAG, "P2P订阅:" + url);
+            Log.i(TAG, "P2P subscription:" + url);
             Disposable dispCast = mStompClient.topic(url)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -242,14 +242,14 @@ public class StompProvider {
     }
 
     /**
-     * 订阅广播
+     * Subscribe to the broadcast
      *
      * @param broadCast
      * @return
      */
     public StompProvider subscriberBroadcast(String... broadCast) {
         if (null == broadCast || broadCast.length == 0) {
-            Log.i(TAG, "广播订阅地址为空--");
+            Log.i(TAG, "Broadcast subscription address is empty--");
             return this;
         }
         mConfig.broadcastUrl(broadCast);
@@ -269,7 +269,7 @@ public class StompProvider {
     }
 
     /**
-     * 停止stomp的服务
+     * Stop stomp service
      */
     private void stopStompService() {
         if (mContext == null) {
@@ -286,7 +286,7 @@ public class StompProvider {
 
 
     /**
-     * 连接stomp服务
+     * Connect to the stomp service
      *
      * @param connectionListener
      */
@@ -295,7 +295,7 @@ public class StompProvider {
     }
 
     /**
-     * 打开链接
+     * Open link
      */
     protected void connect(OnStompConnectionListener callback, List<StompHeader> headers) {
         if (mStompClient == null) {
@@ -308,7 +308,7 @@ public class StompProvider {
         }
 
         if (mStompClient.isConnected()) {
-            Log.i(TAG, "Stomp 链接已经打开，无需重连");
+            Log.i(TAG, "Stomp link is open, no need to reconnect");
             return;
         }
         try {
@@ -318,22 +318,22 @@ public class StompProvider {
                     .subscribe(lifecycleEvent -> {
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
-                                Log.i(TAG, "Stomp 链接打开");
+                                Log.i(TAG, "Stomp link opens");
                                 callback.onConnectionOpened();
                                 if (connectionListener != null) {
                                     connectionListener.onConnectionOpened();
                                 }
                                 break;
                             case ERROR:
-                                Log.e(TAG, "Stomp 连接错误" + lifecycleEvent.getException());
-                                String error = "Stomp 错误 " + (lifecycleEvent.getException() == null ? "" : lifecycleEvent.getException().toString());
+                                Log.e(TAG, "Stomp connection error" + lifecycleEvent.getException());
+                                String error = "Stomp error " + (lifecycleEvent.getException() == null ? "" : lifecycleEvent.getException().toString());
                                 callback.onConnectionError(error);
                                 if (connectionListener != null) {
                                     connectionListener.onConnectionError(error);
                                 }
                                 break;
                             case CLOSED:
-                                Log.e(TAG, "Stomp 连接关闭");
+                                Log.e(TAG, "Stomp connection is closed");
                                 callback.onConnectionClosed();
                                 if (connectionListener != null) {
                                     connectionListener.onConnectionClosed();
@@ -355,7 +355,7 @@ public class StompProvider {
 
 
     /**
-     * 断开链接
+     * Disconnect link
      */
     private void disconnect() {
         if (mStompClient != null) {
@@ -373,7 +373,7 @@ public class StompProvider {
     }
 
     /**
-     * 销毁相关资源
+     * Destroy related resources
      */
     public void destroy() {
         disconnect();
@@ -388,7 +388,7 @@ public class StompProvider {
     }
 
     /**
-     * 统一的消息监听注册入口
+     * Unified message listener registration entry
      *
      * @param listener
      */
@@ -402,7 +402,7 @@ public class StompProvider {
     }
 
     /**
-     * 注册全局发送监听
+     * Register global send listener
      *
      * @param listener
      */
@@ -417,7 +417,7 @@ public class StompProvider {
 
 
     /**
-     * 发送消息
+     * Send a message
      *
      * @param jsonMsg 消息文本
      */
@@ -426,7 +426,7 @@ public class StompProvider {
     }
 
     /**
-     * 发送消息，带自定义头
+     * Send a message with a custom header
      *
      * @param jsonMsg
      * @param header
@@ -436,20 +436,20 @@ public class StompProvider {
         StompHeader defaultHeader = new StompHeader(StompHeader.DESTINATION, mConfig.getSendUrl());
         stompHeaders.add(defaultHeader);
 
-        //如果有自定义头，则一一添加进去
+        //If there are custom headers, add them one by one.
         if (header != null && header.size() > 0) {
             for (Map.Entry<String, String> entry : header.entrySet()) {
                 stompHeaders.add(new StompHeader(entry.getKey(), entry.getValue()));
             }
         }
-        //构造stomp消息体
+        //Construct a stomp message body
         StompMessage message = new StompMessage(StompCommand.SEND, stompHeaders, jsonMsg);
 
         sendMessage(message);
     }
 
     /**
-     * 发送消息并回调监听
+     * Send a message and callback listener
      *
      * @param sender
      */
@@ -460,27 +460,27 @@ public class StompProvider {
                     Log.d(TAG, "Stomp消息发送成功" + sender.getPayload());
                     handleSendResultMessage(StompConfig.STOMP_SEND_SUCCESS, sender);
                 }, throwable -> {
-                    Log.e(TAG, "Stomp消息发送失败", throwable);
+                    Log.e(TAG, "Stomp message failed to be sent", throwable);
                     handleSendResultMessage(StompConfig.STOMP_SEND_FAIL, sender);
                 }));
     }
 
 
     /**
-     * 处理发送消息回调结果
+     * Handling sent message callback results
      *
      * @param status 发送消息状态
      * @param sender 发送的消息
      */
     private void handleSendResultMessage(int status, StompMessage sender) {
-        //全局点对点发送监听
+        //Global peer-to-peer send listener
         if (null != globalSendStatusListener) {
             globalSendStatusListener.onSendMessage(status, sender.getPayload(), status == StompConfig.STOMP_SEND_SUCCESS ? "发送成功" : "发送失败");
         }
     }
 
     /**
-     * 从stompMessage 中获取 消息的内容
+     * Get the content of the message from stompMessage
      *
      * @param message
      * @return
@@ -497,7 +497,7 @@ public class StompProvider {
         UserMessageEntry msg = new Gson().fromJson(content, UserMessageEntry.class);
         String createTime = msg.getCreateTime();
         if (createTime != null) {
-            //判断是否是纯数字
+            //Determine if it is a pure number
             boolean isNumber = createTime.matches("^\\d+$");
             if (isNumber) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
