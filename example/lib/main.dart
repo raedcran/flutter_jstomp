@@ -206,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _initStateChanged(b ? "Initialization successful" : "initialization failed");
 
     if (b) {
-      ///打开连接
+      ///Open connection
       await stomp.connection((open) async {
         print("The connection is open...$open");
         _connectionStateChanged("Stomp connection is open...");
