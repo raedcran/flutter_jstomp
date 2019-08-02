@@ -24,7 +24,7 @@ import io.reactivex.plugins.RxJavaPlugins;
  * @anthor created by jingzhanwu
  * @date 2019-06-24
  * @change
- * @describe Stomp Android插件
+ * @describe Stomp Android plugin
  **/
 public class JStompPlugin implements MethodCallHandler {
     private Activity activity;
@@ -38,10 +38,10 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * rxjava错误处理
+     * Rxjava error handling
      */
     private void handlerRxError() {
-        //统一处理Rxjava的error
+        //Unified processing of Rxjava error
         RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
@@ -64,21 +64,21 @@ public class JStompPlugin implements MethodCallHandler {
         String method = call.method;
         try {
             switch (method) {
-                case FlutterCall.INIT://初始化
+                case FlutterCall.INIT://initialization
                     String url = call.argument("url");
                     String sendUrl = call.argument("sendUrl");
                     boolean b = init(url, sendUrl);
                     result.success(b);
                     break;
-                case FlutterCall.DESTROY: //销毁，断开
+                case FlutterCall.DESTROY: //Destroy, disconnect
                     boolean d = destroy();
                     result.success(d);
                     break;
-                case FlutterCall.CONNECTION://连接
+                case FlutterCall.CONNECTION://connection
                     boolean c = connection();
                     result.success(c);
                     break;
-                case FlutterCall.SEND_MESSAGE: //发送消息
+                case FlutterCall.SEND_MESSAGE: //Send a message
                     Map<String, String> header = null;
                     if (call.hasArgument("header")) {
                         header = (Map<String, String>) call.argument("header");
@@ -86,21 +86,21 @@ public class JStompPlugin implements MethodCallHandler {
                     String str = sendMessage(call.argument("msg"), header);
                     result.success(str);
                     break;
-                case FlutterCall.SUBSCRIBER_P2P://订阅p2p
+                case FlutterCall.SUBSCRIBER_P2P://Subscribe to p2p
                     String[] urls = call.arguments.toString().split(",");
                     boolean s = subscriberP2P(urls);
                     result.success(s);
                     break;
-                case FlutterCall.SUBSCRIBER_BROADCAST: //订阅广播
+                case FlutterCall.SUBSCRIBER_BROADCAST: //Subscribe to the broadcast
                     String[] burls = call.arguments.toString().split(",");
                     boolean sb = subscriberBroadcast(burls);
                     result.success(sb);
                     break;
-                case FlutterCall.MESSAGE_CALLBACK: //设置消息回调
+                case FlutterCall.MESSAGE_CALLBACK: //Set message callback
                     boolean sm = setMessageCallback();
                     result.success(sm);
                     break;
-                case FlutterCall.SEND_CALLBACK: //设置发送回调
+                case FlutterCall.SEND_CALLBACK: //Set the send callback
                     boolean ss = setSendCallback();
                     result.success(ss);
                     break;
@@ -114,7 +114,7 @@ public class JStompPlugin implements MethodCallHandler {
 
 
     /**
-     * stomp初始化
+     * Stomp initialization
      *
      * @param url
      * @param sendUrl
@@ -129,7 +129,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 资源销毁
+     * Resource destruction
      *
      * @return
      */
@@ -144,39 +144,39 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 打开连接
+     * Open connection
      */
     private boolean connection() {
         try {
             StompProvider.get().openConnection(new StompProvider.OnStompConnectionListener() {
                 @Override
                 public void onConnectionOpened() {
-                    //连接打开，通知flutter
+                    //Connect open, notify flutter
                     channel.invokeMethod(CallFlutter.ON_CONNECTION_OPENED, Boolean.TRUE);
                 }
 
                 @Override
                 public void onConnectionError(String error) {
-                    //连接错误，通知flutter
+                    //Connection error, notify flutter
                     channel.invokeMethod(CallFlutter.ON_CONNECTION_ERROR, error);
                 }
 
                 @Override
                 public void onConnectionClosed() {
-                    //连接关闭，通知flutter
+                    //Connection closed, notify flutter
                     channel.invokeMethod(CallFlutter.ON_CONNECTION_CLOSED, Boolean.FALSE);
                 }
             });
             return true;
         } catch (Exception e) {
-            //连接错误，通知flutter
+            //Connection error, notify flutter
             channel.invokeMethod(CallFlutter.ON_CONNECTION_ERROR, e.getMessage());
             return false;
         }
     }
 
     /**
-     * 订阅p2p
+     * Subscribe to p2p
      *
      * @param url
      */
@@ -191,7 +191,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 订阅广播
+     * Subscribe to the broadcast
      *
      * @param url
      */
@@ -206,9 +206,9 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 发送消息
+     * Send a message
      *
-     * @param message 必须是json字串
+     * @param message Must be a json string
      * @return
      */
     private String sendMessage(String message, Map<String, String> header) {
@@ -222,7 +222,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 消息监听器
+     * Message listener
      *
      * @return
      */
@@ -247,7 +247,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 添加发送成功，失败监听器
+     * Add send success, failure listener
      *
      * @return
      */
@@ -271,7 +271,7 @@ public class JStompPlugin implements MethodCallHandler {
 
 
     /**
-     * 定义flutter调用native的方法
+     * Define the method that flutter calls native
      */
     class FlutterCall {
         static final String INIT = "init";
@@ -286,7 +286,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 定义native调用flutter的方法
+     * Define the method of native calling flutter
      */
     class CallFlutter {
         static final String ON_CONNECTION_OPENED = "onConnectionOpen";
@@ -299,7 +299,7 @@ public class JStompPlugin implements MethodCallHandler {
     }
 
     /**
-     * 将stonp消息转换成map
+     * Convert stomp messages to map
      *
      * @param userMsg
      * @return
@@ -319,9 +319,9 @@ public class JStompPlugin implements MethodCallHandler {
         map.put("obj", userMsg.getObj());
         map.put("type", userMsg.getType());
 
-        map.put("sendState", userMsg.getStatus());//发送状态
-        map.put("direct", 1);//接受
-        map.put("status", 1);//状态，成功
+        map.put("sendState", userMsg.getStatus());//send status
+        map.put("direct", 1);//accept
+        map.put("status", 1);//State, success
         map.put("isCrowd", 0);
         return map;
     }
