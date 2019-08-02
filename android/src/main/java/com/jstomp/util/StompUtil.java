@@ -14,17 +14,17 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @company 上海道枢信息科技-->
+ * @company Shanghai Daoqiao Information Technology-->
  * @anthor created by jingzhanwu
  * @date 2018/2/26 0026
  * @change
- * @describe stomp的一些工具
+ * @describe Some tools of stomp
  **/
 public class StompUtil {
     public final static String TAG = "StompUtil";
 
     /**
-     * 判断程序是否在运行，包括前台或后台
+     * Determine if the program is running, including the foreground or background
      *
      * @param context
      * @return
@@ -42,7 +42,7 @@ public class StompUtil {
     }
 
     /**
-     * 是否在前台运行
+     * Is it running in the foreground?
      *
      * @param ctx
      * @return
@@ -81,11 +81,11 @@ public class StompUtil {
 
 
     /**
-     * 判断某个界面是否在前台
+     * Determine if an interface is in the foreground
      *
      * @param context   Context
-     * @param className 界面的类名
-     * @return 是否在前台显示
+     * @param className Interface class name
+     * @return Whether to display in the foreground
      */
     public static boolean isActivityForeground(Context context, String className) {
         if (context == null || TextUtils.isEmpty(className))
@@ -93,7 +93,7 @@ public class StompUtil {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
         for (ActivityManager.RunningTaskInfo taskInfo : list) {
-            if (taskInfo.topActivity.getShortClassName().contains(className)) { // 说明它已经启动了
+            if (taskInfo.topActivity.getShortClassName().contains(className)) { // Explain that it has been started
                 return true;
             }
         }
