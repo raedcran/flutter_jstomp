@@ -28,12 +28,12 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
 /**
- * @company 上海道枢信息科技-->
+ * @company Shanghai Daoqiao Information Technology-->
  * @anthor created by jingzhanwu
  * @date 2018/1/23
  * @change
  * @describe describe
- * Stomp消息处理
+ * Stomp message processing
  **/
 @SuppressLint("NewApi")
 public class StompProvider {
@@ -457,7 +457,7 @@ public class StompProvider {
         compositeDisposable.add(mStompClient.send(sender)
                 .compose(applySchedulers())
                 .subscribe(() -> {
-                    Log.d(TAG, "Stomp消息发送成功" + sender.getPayload());
+                    Log.d(TAG, "Stomp message sent successfully" + sender.getPayload());
                     handleSendResultMessage(StompConfig.STOMP_SEND_SUCCESS, sender);
                 }, throwable -> {
                     Log.e(TAG, "Stomp message failed to be sent", throwable);
@@ -469,8 +469,8 @@ public class StompProvider {
     /**
      * Handling sent message callback results
      *
-     * @param status 发送消息状态
-     * @param sender 发送的消息
+     * @param status Send message status
+     * @param sender Sent message
      */
     private void handleSendResultMessage(int status, StompMessage sender) {
         //Global peer-to-peer send listener
